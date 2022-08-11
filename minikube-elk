@@ -1,0 +1,71 @@
+#cat elasticsearch-values-2.yaml
+replicas: 1
+minimumMasterNodes: 1
+
+ingress:
+  enabled: true
+  hosts:
+    - host: es-elk.s9.devopscloud.link #Change the hostname to the one you need
+      paths:
+        - path: /
+  
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi
+    
+#helm install elk-elasticsearch elastic/elasticsearch -f values-2.yaml --namespace logging --create-namespace    
+      
+#cat kibana-values.yml
+elasticsearchHosts: "http://elasticsearch-master:9200"
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: kibana-elk.s9.devopscloud.link
+      paths:
+        - path: /
+        
+ # helm install elk-kibana elastic/kibana -f kibana-values.yamls
+
+ 
+  #================================================
+  persistence:
+  enabled: true
+
+logstashConfig:
+  logstash.yml: |
+    http.host: 0.0.0.0
+    xpack.monitoring.enabled: false
+
+logstashPipeline: 
+ logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => "http://elasticsearch-master.logging.svc.cluster.local:9200"
+        manage_template => false
+        index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+        document_type => "%{[@metadata][type]}"
+      }
+    }
+
+service:
+  type: ClusterIP
+  ports:
+    - name: beats
+      port: 5044
+      protocol: TCP
+      targetPort: 5044
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+      
+ # helm install elk-logstash elastic/logstash -f logstash.values.yaml
+     
