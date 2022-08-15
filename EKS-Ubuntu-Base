@@ -89,3 +89,10 @@ curl -H "Content-Type: application/json" -XGET '127.0.0.1:9200/shakespeare/_sear
 }
 }
 }' 
+
+
+root@elk:/etc/filebeat/modules.d# curl -XGET localhost:9200/_cat/indices?v
+health status index                                      uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   .ds-logs-generic-default-2022.08.15-000001 1WYkt-4MTQq_jzVtzfdy3Q   1   1     211166            0     40.1mb         40.1mb
+yellow open   shakespeare                                0f1UJsraR-OLI_Q2s9CLow   1   1     111396            0       18mb           18mb
+
