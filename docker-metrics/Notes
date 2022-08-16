@@ -1,8 +1,25 @@
-How to install Metricbeats.
+#How to install Metricbeats in ubuntu.
+
+apt-get install apt-transport-https
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+
+apt-get install metricbeat
+
+update /etc/metricbeat/metricbeat.yml
+setup.kibana:
+  host: "192.168.9.90:5601"
+
+output.elasticsearch:
+  hosts: ["192.168.9.90:9200"]
 
 metricbeat modules enable docker
-
 mv /etc/metricbeat/modules.d/docker.yml.disabled /etc/metricbeat/modules.d/docker.yml
+update /etc/metricbeat/modules.d/docker.yml
+
 systemctl daemon-reload
 systemctl enable metricbeat.service
 systemctl start metricbeat.service
+
+check in Kibana --> dashboard --> search for docker [Metricbeat Docker]Overview ECS
+
