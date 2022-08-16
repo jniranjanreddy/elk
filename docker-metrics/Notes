@@ -1,0 +1,8 @@
+How to install Metricbeats.
+
+metricbeat modules enable docker
+
+mv /etc/metricbeat/modules.d/docker.yml.disabled /etc/metricbeat/modules.d/docker.yml
+systemctl daemon-reload
+systemctl enable metricbeat.service
+systemctl start metricbeat.service
